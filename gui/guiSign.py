@@ -5,6 +5,7 @@
 
 from pathlib import Path
 from tkinter import *
+import tkinter.filedialog as fd
 import guiLanding
 # Explicit imports to satisfy Flake8
 # from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
@@ -30,6 +31,12 @@ class Sign(Frame):
             highlightthickness = 0,
             relief = "ridge"
         )
+
+        def upload_pressed(type):
+            filetypes = [('text files', '*.txt')]
+            f = fd.askopenfile(filetypes=filetypes)
+
+        scrollbar = Scrollbar(orient="horizontal")
 
         self.canvas.place(x = 0, y = 0)
         self.canvas.create_text(
@@ -79,13 +86,15 @@ class Sign(Frame):
             bd=0,
             bg="#D9E4E8",
             fg="#000716",
-            highlightthickness=0
+            font=("OpenSansRoman Regular", 20 * -1),
+            highlightthickness=0,
+            xscrollcommand=scrollbar.set
         )
         self.entry_1.place(
             x=112.09219741821289,
-            y=155.0,
-            width=975.8156051635742,
-            height=49.0
+            y=170.0,
+            width=920,
+            height=25
         )
 
         # canvas.create_rectangle(
@@ -107,13 +116,15 @@ class Sign(Frame):
             bd=0,
             bg="#D9E4E8",
             fg="#000716",
-            highlightthickness=0
+            font=("OpenSansRoman Regular", 20 * -1),
+            highlightthickness=0,
+            xscrollcommand=scrollbar.set
         )
         self.entry_2.place(
             x=112.09219741821289,
-            y=272.0,
-            width=975.8156051635742,
-            height=49.0
+            y=287.0,
+            width=920,
+            height=25
         )
 
         self.canvas.create_text(
@@ -161,6 +172,33 @@ class Sign(Frame):
         #     423.1205711364746,
         #     fill="#000000",
         #     outline="")
+        self.R1= Radiobutton(
+            text="Store in separate file",
+            font=("OpenSansRoman Regular", 20 * -1),
+            background="#FFFFFF",
+            value="value1",
+            variable="variable1",
+            anchor=NW
+        )
+
+        self.R1.place(
+            x = 119.78369140625,
+            y = 392.3546142578125
+        )
+
+        self.R2= Radiobutton(
+            text="Add in current file",
+            font=("OpenSansRoman Regular", 20 * -1),
+            background="#FFFFFF",
+            value="value2",
+            variable="variable1",
+            anchor=NW
+        )
+
+        self.R2.place(
+            x = 503.50341796875,
+            y = 392.3546142578125
+        )
 
         # canvas.create_rectangle(
         #     503.50341796875,
@@ -202,10 +240,34 @@ class Sign(Frame):
             height=70.0780029296875
         )
 
-        # canvas.create_rectangle(
-        #     1053.0,
-        #     287.0,
-        #     1077.7149658203125,
-        #     309.99999237060547,
-        #     fill="#000000",
-        #     outline="")
+        self.button_image_6 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+        self.button_6 = Button(
+            image=self.button_image_6,
+            borderwidth=0,
+            highlightthickness=0,
+            command=lambda: upload_pressed("decrypt"),
+            relief="flat"
+        )
+        self.button_6.place(
+            x=1050,
+            y=170.0,
+            width=25,
+            height=25,
+            anchor=NW
+        )
+
+        self.button_7 = Button(
+            image=self.button_image_6,
+            borderwidth=0,
+            highlightthickness=0,
+            command=lambda: upload_pressed("decrypt"),
+            relief="flat"
+        )
+        self.button_7.place(
+            x=1050,
+            y=287.0,
+            width=25,
+            height=25,
+            anchor=NW
+        )

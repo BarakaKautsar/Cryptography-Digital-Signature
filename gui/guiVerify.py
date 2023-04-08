@@ -5,6 +5,7 @@
 
 from pathlib import Path
 from tkinter import *
+import tkinter.filedialog as fd
 import guiLanding
 
 OUTPUT_PATH = Path(__file__).parent
@@ -28,6 +29,10 @@ class Verify(Frame):
             relief = "ridge"
         )
 
+        def upload_pressed(type):
+            filetypes = [('text files', '*.txt')]
+            f = fd.askopenfile(filetypes=filetypes)
+
         self.canvas.place(x = 0, y = 0)
         self.entry_image_1 = PhotoImage(
             file=relative_to_assets("entry_1.png"))
@@ -36,6 +41,9 @@ class Verify(Frame):
             495.0,
             image=self.entry_image_1
         )
+
+        scrollbar = Scrollbar(orient="horizontal")
+
         self.entry_1 = Text(
             bd=0,
             bg="#D9E4E8",
@@ -105,13 +113,15 @@ class Verify(Frame):
             bd=0,
             bg="#D9E4E8",
             fg="#000716",
-            highlightthickness=0
+            font=("OpenSansRoman Regular", 20 * -1),
+            highlightthickness=0,
+            xscrollcommand=scrollbar.set
         )
         self.entry_2.place(
             x=111.86170387268066,
-            y=163.0,
-            width=976.2765922546387,
-            height=49.0
+            y=178.0,
+            width=920,
+            height=25.0
         )
 
         self.entry_image_3 = PhotoImage(
@@ -125,13 +135,15 @@ class Verify(Frame):
             bd=0,
             bg="#D9E4E8",
             fg="#000716",
-            highlightthickness=0
+            font=("OpenSansRoman Regular", 20 * -1),
+            highlightthickness=0,
+            xscrollcommand=scrollbar.set
         )
         self.entry_3.place(
             x=111.86170387268066,
-            y=279.0,
-            width=976.2765922546387,
-            height=48.0
+            y=294.0,
+            width=920,
+            height=25.0
         )
 
         self.button_image_1 = PhotoImage(
@@ -150,18 +162,52 @@ class Verify(Frame):
             height=69.13302612304688
         )
 
-        self.canvas.create_rectangle(
-            1057.0,
-            177.0,
-            1081.71484375,
-            199.99998474121094,
-            fill="#000000",
-            outline="")
 
-        self.canvas.create_rectangle(
-            1057.0,
-            292.0,
-            1081.71484375,
-            314.99999237060547,
-            fill="#000000",
-            outline="")
+        self.button_image_6 = PhotoImage(
+            file=relative_to_assets("button_6.png"))
+        self.button_6 = Button(
+            image=self.button_image_6,
+            borderwidth=0,
+            highlightthickness=0,
+            command=lambda: upload_pressed("decrypt"),
+            relief="flat"
+        )
+        self.button_6.place(
+            x=1050,
+            y=178.0,
+            width=25,
+            height=25,
+            anchor=NW
+        )
+
+        self.button_7 = Button(
+            image=self.button_image_6,
+            borderwidth=0,
+            highlightthickness=0,
+            command=lambda: upload_pressed("decrypt"),
+            relief="flat"
+        )
+        self.button_7.place(
+            x=1050,
+            y=294.0,
+            width=25,
+            height=25,
+            anchor=NW
+        )
+
+
+        # self.canvas.create_rectangle(
+        #     1057.0,
+        #     177.0,
+        #     1081.71484375,
+        #     199.99998474121094,
+        #     fill="#000000",
+        #     outline="")
+
+        # self.canvas.create_rectangle(
+        #     1057.0,
+        #     292.0,
+        #     1081.71484375,
+        #     314.99999237060547,
+        #     fill="#000000",
+        #     outline="")
