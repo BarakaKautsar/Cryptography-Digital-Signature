@@ -38,15 +38,39 @@ def generate_public_key(n, totient):
     
     return (e,n)
 
-def generate_private_key(totient,pubkey):
-    e, n = pubkey
-    k = 1
-    d = (1 + (k*totient))/e
-    while (d % 1 != 0.0) :
-        d = (1 + (k*totient))/e
-        k = k + 1
+# def generate_private_key(totient,pubkey):
+#     e, n = pubkey
+#     k = 1
+#     d = (1 + (k*totient))/e
+#     while (d % 1 != 0.0) :
+#         d = (1 + (k*totient))/e
+#         k = k + 1
     
-    return (int(d),n)
+#     return (int(d),n)
+
+def generate_private_key(totient, pubkey):
+    key, n = pubkey
+    d_old, d_new = 0, 1
+    r_old, r_new = totient, key
+    while r_new != 0:
+        quotient = r_old // r_new
+
+        temp = r_old
+        r_old = r_new
+        r_new = temp - quotient * r_new 
+
+        temp1 = d_old
+        d_old = d_new 
+        d_new = temp1 - quotient * d_new
+
+        #r_old, r_new = r_new, r_old - quotient * r_new
+        #d_old, d_new = d_new, d_old - quotient * d_new
+    
+    d = 0
+    if r_old == 1 :
+        d = d_old % totient
+
+    return (d, n)
         
 def greatest_common_divisor(a, b):
     while b != 0 :
