@@ -48,12 +48,14 @@ class Verify(Frame):
             bd=0,
             bg="#D9E4E8",
             fg="#000716",
-            highlightthickness=0
+            font=("OpenSansRoman Regular", 13 * -1),
+            highlightthickness=0,
+            xscrollcommand=scrollbar.set
         )
         self.entry_1.place(
-            x=111.86170387268066,
-            y=447.0,
-            width=976.2765922546387,
+            x=112,
+            y=450,
+            width=970,
             height=94.0
         )
 

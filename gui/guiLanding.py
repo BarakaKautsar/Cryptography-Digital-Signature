@@ -20,6 +20,7 @@ def relative_to_assets(path: str) -> Path:
 class Landing(Frame):
     def __init__(self, master):
         Frame.__init__(self, master, width = 1200, height = 800, bg = "#FFFFFF")
+        
         self.canvas = Canvas(
             master,
             bg = "#FFFFFF",
@@ -29,8 +30,11 @@ class Landing(Frame):
             highlightthickness = 0,
             relief = "ridge"
         )
+        self.canvas.place(x=0,y=0)
 
-        self.canvas.place(x = 0, y = 0)
+        # self.myScrollbar = Scrollbar(master, orient=VERTICAL, command= self.canvas.yview)
+        # self.myScrollbar.pack(side=RIGHT, fill=Y)
+
         self.canvas.create_text(
             418.0,
             277.96044921875,
