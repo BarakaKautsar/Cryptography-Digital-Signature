@@ -156,13 +156,15 @@ class Sign(Frame):
             bd=0,
             bg="#D9E4E8",
             fg="#000716",
-            highlightthickness=0
+            font=("OpenSansRoman Regular", 13 * -1),
+            highlightthickness=0,
+            xscrollcommand=scrollbar.set
         )
         self.entry_3.place(
-            x=112.09219741821289,
-            y=534.0,
+            x=115,
+            y=540,
             width=975.8156051635742,
-            height=127.0
+            height=120.0
         )
 
         # canvas.create_rectangle(

@@ -5,10 +5,12 @@
 
 from pathlib import Path
 from tkinter import *
+import tkinter.messagebox as tkmb
+import tkinter.filedialog as fd
 import guiLanding
-# Explicit imports to satisfy Flake8
-
-
+import sys
+sys.path.append("../Kripto_3/src/")
+import key_generator as generator 
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame1")
@@ -18,14 +20,70 @@ def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 
-# window = Tk()
-
-# window.geometry("1200x800")
-# window.configure(bg = "#FFFFFF")
-
 class GenerateKey(Frame):
     def __init__(self, master):
         Frame.__init__(self, master, width = 1200, height = 800, bg = "#FFFFFF")
+
+        #functions
+        def random_pressed():
+            self.entry_1.delete(1.0,END)
+            self.entry_2.delete(1.0,END)
+            self.entry_3.delete(1.0,END)
+            self.entry_4.delete(1.0,END)
+
+
+            p = generator.random_prime()
+            q = generator.random_prime()
+            self.entry_1.insert(END,p)
+            self.entry_2.insert(END,q)
+            n, totient = generator.initiate(p,q)
+            e,n = generator.generate_public_key(n, totient)
+            self.entry_3.insert(END,e)
+
+        def check_prime():
+            p = self.entry_1.get(1.0,END)
+            q = self.entry_2.get(1.0,END)
+            if p == q:
+                tkmb.showerror("Error", "p and q must be different")
+                return False
+            if not generator.is_prime(int(p)):
+                tkmb.showerror("Error", "p is not prime")
+                return False
+            if not generator.is_prime(int(q)):
+                tkmb.showerror("Error", "q is not prime")
+                return False
+            return True
+            
+        def save_pressed():
+            if(check_prime()):
+                p = self.entry_1.get(1.0,END)
+                q = self.entry_2.get(1.0,END)
+                n, totient = generator.initiate(int(p),int(q))
+                pubkey = generator.generate_public_key(n, totient)
+                prikey = generator.generate_private_key(totient, pubkey)
+                self.entry_4.config(state=NORMAL)
+                self.entry_4.delete(1.0,END)
+                self.entry_4.insert(END,prikey[0])
+                self.entry_4.config(state=DISABLED)
+                savefilepub = ""
+                savefilepriv = ""
+                tkmb.showinfo("Save", "Save your public key")
+                if savefilepub =="":
+                    savefilepub = fd.asksaveasfilename(defaultextension=".pub")
+                if savefilepub != "":
+                    with open(savefilepub, 'w') as f:
+                        f.write(str(pubkey))
+                tkmb.showinfo("Save", "Save your private key")
+                if savefilepriv =="":
+                    savefilepriv = fd.asksaveasfilename(defaultextension=".priv")
+                if savefilepriv != "":
+                    with open(savefilepriv, 'w') as f:
+                        f.write(str(prikey))
+                tkmb.showinfo("Success", "Key saved")
+        
+
+
+
         self.canvas = Canvas(
             master,
             bg = "#FFFFFF",
@@ -57,7 +115,7 @@ class GenerateKey(Frame):
 
         self.canvas.create_text(
             95.0,
-            235.93190002441406,
+            223.0,
             anchor="nw",
             text="q Value",
             fill="#000000",
@@ -66,7 +124,7 @@ class GenerateKey(Frame):
 
         self.canvas.create_text(
             557.0,
-            361.50390625,
+            475.0,
             anchor="nw",
             text="Result",
             fill="#28293D",
@@ -84,40 +142,42 @@ class GenerateKey(Frame):
             bd=0,
             bg="#D9E4E8",
             fg="#000716",
-            highlightthickness=0
+            font=("OpenSansRoman Regular", 20 * -1),
+            highlightthickness=0,
         )
         self.entry_1.place(
-            x=111.63205909729004,
-            y=164.0,
-            width=976.7358818054199,
-            height=48.0
+            x=112,
+            y=175,
+            width=950,
+            height=25.0
         )
 
         self.entry_image_2 = PhotoImage(
             file=relative_to_assets("entry_2.png"))
         self.entry_bg_2 = self.canvas.create_image(
             600.0,
-            303.0,
+            290.068115234375,
             image=self.entry_image_2
         )
         self.entry_2 = Text(
             bd=0,
             bg="#D9E4E8",
             fg="#000716",
-            highlightthickness=0
+            font=("OpenSansRoman Regular", 20 * -1),
+            highlightthickness=0,
         )
         self.entry_2.place(
-            x=111.63205909729004,
-            y=278.0,
+            x=112,
+            y=275,
             width=976.7358818054199,
-            height=48.0
+            height=25.0
         )
 
         self.canvas.create_text(
             95.0,
-            411.400146484375,
+            324.0,
             anchor="nw",
-            text="Public Key",
+            text="e Value",
             fill="#000000",
             font=("OpenSansRoman Regular", 20 * -1)
         )
@@ -135,20 +195,21 @@ class GenerateKey(Frame):
             file=relative_to_assets("entry_3.png"))
         self.entry_bg_3 = self.canvas.create_image(
             600.0,
-            472.0,
+            384.599853515625,
             image=self.entry_image_3
         )
         self.entry_3 = Text(
             bd=0,
             bg="#D9E4E8",
             fg="#000716",
-            highlightthickness=0
+            font=("OpenSansRoman Regular", 20 * -1),
+            highlightthickness=0,
         )
         self.entry_3.place(
-            x=111.63205909729004,
-            y=447.0,
+            x=112,
+            y=370,
             width=976.7358818054199,
-            height=48.0
+            height=25.0
         )
 
         self.entry_image_4 = PhotoImage(
@@ -162,13 +223,15 @@ class GenerateKey(Frame):
             bd=0,
             bg="#D9E4E8",
             fg="#000716",
-            highlightthickness=0
+            font=("OpenSansRoman Regular", 20 * -1),
+            highlightthickness=0,
         )
+        self.entry_4.config(state=DISABLED)
         self.entry_4.place(
-            x=111.63205909729004,
-            y=561.0,
+            x=112,
+            y=570,
             width=976.7358818054199,
-            height=48.0
+            height=25.0
         )
 
         self.button_image_1 = PhotoImage(
@@ -193,7 +256,7 @@ class GenerateKey(Frame):
             image=self.button_image_2,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: self.master.switch_frame(guiLanding.Landing),
+            command=lambda: save_pressed(),
             relief="flat"
         )
         self.button_2.place(
@@ -202,3 +265,19 @@ class GenerateKey(Frame):
             width=216.11444091796875,
             height=68.19168090820312
         )
+
+        self.button_image_3 = PhotoImage(
+            file=relative_to_assets("button_3.png"))
+        self.button_3 = Button(
+            image=self.button_image_3,
+            borderwidth=0,
+            highlightthickness=0,
+            command=lambda: random_pressed(),
+            relief="flat"
+        )
+        self.button_3.place(
+            x=890.0,
+            y=459.0,
+            width=215.0653076171875,
+            height=68.19140625
+        )        
