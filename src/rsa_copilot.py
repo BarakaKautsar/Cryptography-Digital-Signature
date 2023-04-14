@@ -1,10 +1,14 @@
-#digital signature using SHA256 primitive
+#rsa encryption and decryption with sha3-256 hashed text but without library beside sha-3 library and basic libraries
 
-#coba with pow
-
-import hashlib
-import random
 from key_generator import *
+from hashlib import sha3_256
+import random
+
+def convHextoDec(hex):
+    return int(hex, 16)
+
+def hash_sha3_256(message):
+    return (sha3_256(message.encode()).hexdigest())
 
 def rsa_encrypt_sign (hashedtext, private_key):
     #print("hashed text : " + str(hashedtext)) # hasil hash text
@@ -25,19 +29,6 @@ def rsa_decrypt_verify (cipher, public_key):
     #print("the decrypted cipher is : ", temp)
 
     return temp
-    
-def encrypt(public_key, message):
-    key, n = public_key
-    cipher_text = [pow(ord(char), key, n) for char in message]
-    return cipher_text
-
-def decrypt(cipher_text, private_key):
-    key, n = private_key
-    plain_text = [chr(pow(char, key, n)) for char in cipher_text]
-    return ''.join(plain_text)
-    
-def sha256 (text):
-    return int(hashlib.sha256(text.encode()).hexdigest(), 16)
 
 def main():
     #generate key
@@ -53,14 +44,12 @@ def main():
     message = input("Enter message: ")
     #print(message)
     #hash message
-    hashedtext = sha256(message)
+    hashedtext = convHextoDec(hash_sha3_256(message))
     #print(hashedtext)
     #encrypt hash
     cipher = rsa_encrypt_sign(hashedtext, prikey)
     #decrypt hash
     decrypted = rsa_decrypt_verify(cipher, pubkey)
-    print("hasil decrypted text adalah : ", decrypted /n)
-    print("hasil hashed text adalah : ", hashedtext)
     #compare hash
     if (decrypted == hashedtext):
         print("Hash is verified")
