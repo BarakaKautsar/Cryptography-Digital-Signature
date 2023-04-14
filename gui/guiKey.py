@@ -15,7 +15,6 @@ import key_generator as generator
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame1")
 
-
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
@@ -45,6 +44,7 @@ class GenerateKey(Frame):
         def check_prime():
             p = self.entry_1.get(1.0,END)
             q = self.entry_2.get(1.0,END)
+            e = self.entry_3.get(1.0,END)
             if p == q:
                 tkmb.showerror("Error", "p and q must be different")
                 return False
@@ -53,6 +53,9 @@ class GenerateKey(Frame):
                 return False
             if not generator.is_prime(int(q)):
                 tkmb.showerror("Error", "q is not prime")
+                return False
+            if not generator.check_relative_prime(((int(p)-1)*(int(q)-1)),int(e)):
+                tkmb.showerror("Error", "e is not relative prime with totient(n) = (p-1)(q-1)")
                 return False
             return True
             
