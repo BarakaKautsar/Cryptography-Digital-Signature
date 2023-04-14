@@ -29,20 +29,40 @@ def decrypt_digest(pubkey, ciphertext):
 
     return plaintext
 
-p = 52218497
-q = 344091697
-n = 17967951247519409
-d = 3383867639095039
-e = 14926788939532543
+BUF_SIZE = 65536  # lets read stuff in 64kb chunks!
 
-prikey = (d, n)
-pubkey = (e, n)
+def hashfile(filename):
+    sha1 = hashlib.sha1()
+    with open(filename, 'rb') as f:
+        while True:
+            data = f.read(BUF_SIZE)
+            if not data:
+                break
+            sha1.update(data)
+    return sha1.hexdigest()
 
-text = "pow"
-haste = hashlib.sha3_256(text.encode()).hexdigest()
-print(haste)
+def sign_message(message, private_key):
+    message_hashed = hashlib.sha3_256(message.encode()).hexdigest()
+    return encrypt_digest(private_key, message_hashed)
 
-sign = encrypt_digest(prikey, haste)
-print(sign)
-print(decrypt_digest(pubkey, sign))
-print(haste == decrypt_digest(pubkey, sign))
+def sign_file(file_path, private_key):
+    file_hashed = hashfile(file_path)
+    return encrypt_digest(private_key, file_hashed)
+
+# p = 52218497
+# q = 344091697
+# n = 17967951247519409
+# d = 3383867639095039
+# e = 14926788939532543
+
+# prikey = (d, n)
+# pubkey = (e, n)
+
+# text = "pow"
+# haste = hashlib.sha3_256(text.encode()).hexdigest()
+# print(haste)
+
+# sign = encrypt_digest(prikey, haste)
+# print(sign)
+# # print(decrypt_digest(pubkey, sign))
+# # print(haste == decrypt_digest(pubkey, sign))

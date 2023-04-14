@@ -7,9 +7,10 @@ from pathlib import Path
 from tkinter import *
 import tkinter.filedialog as fd
 import tkinter.messagebox as tkmb
+import sys
 import guiLanding
-# Explicit imports to satisfy Flake8
-# from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+sys.path.append("../Kripto_3/src/")
+from RSA import sign_message, sign_file
 
 
 OUTPUT_PATH = Path(__file__).parent
@@ -34,6 +35,7 @@ class Sign(Frame):
         )
 
         self.istext = True
+        self.prikey = (0, 0)
 
         def read_key():
             filetypes = [('private key', ".priv")]
@@ -43,8 +45,8 @@ class Sign(Frame):
             with open(filename, "r") as f:
                 keystring = f.read()
                 keystring = keystring.replace("(", "").replace(")", "")
-                key = tuple(map(int, keystring.split(",")))
-            self.entry_1.insert(END, key[0])
+                self.prikey = tuple(map(int, keystring.split(",")))
+            self.entry_1.insert(END, self.prikey[0])
 
         def upload_pressed():
             self.entry_2.delete(1.0, END)
@@ -63,10 +65,11 @@ class Sign(Frame):
             elif (self.entry_2.get(1.0, END).replace("\n","") == ""):  
                 tkmb.showerror("Error", "Please enter a file")
                 return
-            else:    
-                signature = "signature"
+            else:   
                 if (radio.get()==1): #add to file
                     if self.istext:
+                        message = self.entry_2.get(1.0,END).replace("\n","")
+                        signature = sign_message(message,self.prikey)
                         filename = ""
                         if filename =="":
                             filename = fd.asksaveasfilename(defaultextension=".txt")
@@ -78,24 +81,18 @@ class Sign(Frame):
                                 tkmb.showinfo("save", "save complete")
                     elif (self.entry_2.get(1.0,END).replace("\n","").endswith(".txt")):
                         filename = self.entry_2.get(1.0,END).replace("\n","")
+                        with open(filename, 'r') as f:
+                            message = f.read()
+                            signature = sign_message(message,self.prikey)
                         with open(filename, 'a') as f:
                             f.writelines([f'\n*** Begin of digital signature ****\n', f'{signature}\n', '*** End of digital signature ****'])
                             f.close()
                             tkmb.showinfo("save", "save complete")
                     else:
-                        print(self.entry_2.get(1.0,END))
                         tkmb.showerror("Error", "Unable to add to current file type, please save signature in a seperate file or choose a different file type")
                 else: #separate file
-                    tkmb.showinfo("save", "save signature file")
-                    savefile = ""
-                    if savefile =="":
-                        savefile = fd.asksaveasfilename(defaultextension=".txt")
-                    if savefile != "":
-                        with open(savefile, 'w') as f:
-                            f.writelines([f'*** Begin of digital signature ****\n', f'{signature}\n','*** End of digital signature ****'])
-                            f.close()
                     if self.istext:
-                        tkmb.showinfo("save", "save message file")
+                        tkmb.showinfo("save", "save your message file")
                         textfile = ""
                         if textfile =="":
                             textfile = fd.asksaveasfilename(defaultextension=".txt")
@@ -104,8 +101,27 @@ class Sign(Frame):
                                 f.write(self.entry_2.get(1.0, END))
                                 f.close()
                                 tkmb.showinfo("save", "save complete")
+                        signature = sign_message(self.entry_2.get(1.0,END).replace("\n",""),self.prikey)
+                        tkmb.showinfo("save", "save your signature file")
+                        savefile = ""
+                        if savefile =="":
+                            savefile = fd.asksaveasfilename(defaultextension=".txt")
+                        if savefile != "":
+                            with open(savefile, 'w') as f:
+                                f.writelines([f'*** Begin of digital signature ****\n', f'{signature}\n','*** End of digital signature ****'])
+                                f.close()
+                            tkmb.showinfo("save", "save complete")
                     else:
-                        tkmb.showinfo("save", "save complete")
+                        signature = sign_file(self.entry_2.get(1.0,END).replace("\n",""),self.prikey)
+                        tkmb.showinfo("save", "save your signature file")
+                        savefile = ""
+                        if savefile =="":
+                            savefile = fd.asksaveasfilename(defaultextension=".txt")
+                        if savefile != "":
+                            with open(savefile, 'w') as f:
+                                f.writelines([f'*** Begin of digital signature ****\n', f'{signature}\n','*** End of digital signature ****'])
+                                f.close()
+                            tkmb.showinfo("save", "save complete")
                 self.entry_3.insert(END,f"*** Begin of digital signature ****\n{signature}\n*** End of digital signature ****")
                     
         scrollbar = Scrollbar(orient="horizontal")
