@@ -79,6 +79,18 @@ def greatest_common_divisor(a, b):
         b = temp % b
     return a
 
+def check_relative_prime(a, b):
+    is_relative_prime = False
+    while b != 0 :
+        temp = a
+        a = b 
+        b = temp % b
+    
+    if a == 1 :
+        is_relative_prime = True
+        
+    return is_relative_prime
+
 #contoh cara kerja
 # p = random_prime()
 # q = random_prime()
