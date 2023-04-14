@@ -15,6 +15,8 @@ def rsa_encrypt_sign (hashedtext, private_key):
     #print("hasil hexed cipher : " + str(cipher))
     return cipher
 
+
+
 def rsa_decrypt_verify (cipher, public_key):
     #print(cipher)
     e, n = public_key
@@ -25,7 +27,8 @@ def rsa_decrypt_verify (cipher, public_key):
     #print("the decrypted cipher is : ", temp)
 
     return temp
-    
+
+"""
 def encrypt(public_key, message):
     key, n = public_key
     cipher_text = [pow(ord(char), key, n) for char in message]
@@ -35,6 +38,8 @@ def decrypt(cipher_text, private_key):
     key, n = private_key
     plain_text = [chr(pow(char, key, n)) for char in cipher_text]
     return ''.join(plain_text)
+"""    
+
     
 def sha256 (text):
     return int(hashlib.sha256(text.encode()).hexdigest(), 16)
