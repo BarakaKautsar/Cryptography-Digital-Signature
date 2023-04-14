@@ -92,25 +92,10 @@ def check_relative_prime(a, b):
     return is_relative_prime
 
 #contoh cara kerja
-<<<<<<< HEAD
-"""
-p = random_prime()
-q = random_prime()
-print(q)
-print(p)
-n, totient = initiate(p,q)
-print(n)
-print(totient)
-pubkey = generate_public_key(n, totient)
-prikey = generate_private_key(totient, pubkey)
-print("pubkey" + str(pubkey))
-print("prikey" + str(prikey))
-"""
-=======
 # p = random_prime()
 # q = random_prime()
 # print(q)
-# print(p)
+# print(p)s
 # n, totient = initiate(p,q)
 # print(n)
 # print(totient)
@@ -118,4 +103,3 @@ print("prikey" + str(prikey))
 # prikey = generate_private_key(totient, pubkey)
 # print("pubkey" + str(pubkey))
 # print("prikey" + str(prikey))
->>>>>>> 0de3a52ec8ac5251a21903fe581425563bd76781

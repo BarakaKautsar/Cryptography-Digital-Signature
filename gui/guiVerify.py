@@ -29,35 +29,42 @@ class Verify(Frame):
             relief = "ridge"
         )
 
-        def upload_pressed(type):
-            filetypes = [('text files', '*.txt')]
-            f = fd.askopenfile(filetypes=filetypes)
+        def read_key():
+            self.entry_2.delete(1.0, END)
+            filetypes = [('public key', ".pub")]
+            filename = ""
+            filename = fd.askopenfile(filetypes=filetypes)
+            filename = str(filename).split("'")[1]
+            with open(filename, "r") as f:
+                keystring = f.read()
+                keystring = keystring.replace("(", "").replace(")", "")
+                key = tuple(map(int, keystring.split(",")))
+            self.entry_2.insert(END, key[0])
+
+        self.istext = True
+
+        def upload_pressed():
+            self.entry_3.delete(1.0, END)
+            filetypes = [('All files', '*.*'),('text files', '*.txt')]
+            filename = ""
+            filename = fd.askopenfile(filetypes=filetypes)
+            filename = str(filename).split("'")[1]
+            self.entry_3.insert(END, filename)
+            self.istext = False
+            self.entry_3.config(state=DISABLED)
+        
+        def read_sign():
+            self.entry_4.delete(1.0, END)
+            filetypes = [('signature', ".txt")]
+            filename = ""
+            filename = fd.askopenfile(filetypes=filetypes)
+            filename = str(filename).split("'")[1]
+            self.entry_4.insert(END, filename)
+            self.entry_4.config(state=DISABLED)
 
         self.canvas.place(x = 0, y = 0)
-        self.entry_image_1 = PhotoImage(
-            file=relative_to_assets("entry_1.png"))
-        self.entry_bg_1 = self.canvas.create_image(
-            600.0,
-            495.0,
-            image=self.entry_image_1
-        )
 
         scrollbar = Scrollbar(orient="horizontal")
-
-        self.entry_1 = Text(
-            bd=0,
-            bg="#D9E4E8",
-            fg="#000716",
-            font=("OpenSansRoman Regular", 13 * -1),
-            highlightthickness=0,
-            xscrollcommand=scrollbar.set
-        )
-        self.entry_1.place(
-            x=112,
-            y=450,
-            width=970,
-            height=94.0
-        )
 
         self.canvas.create_text(
             319.999755859375,
@@ -88,20 +95,36 @@ class Verify(Frame):
 
         self.canvas.create_text(
             556.0,
-            373.0185546875,
+            456.0,
             anchor="nw",
             text="Result",
             fill="#28293D",
             font=("OpenSansRoman Bold", 26 * -1)
         )
 
-        self.canvas.create_text(
-            452.0,
-            475.8748779296875,
-            anchor="nw",
-            text="Verified or Unverified",
-            fill="#28293D",
-            font=("OpenSansRoman Bold", 26 * -1)
+        self.entry_image_1 = PhotoImage(
+            file=relative_to_assets("entry_1.png"))
+        self.entry_bg_1 = self.canvas.create_image(
+            600.0,
+            577.9814453125,
+            image=self.entry_image_1
+        )
+
+        self.entry_1 = Label(
+            text="",
+            bd=0,
+            bg="#D9E4E8",
+            fg="#000716",
+            font=("OpenSansRoman Regular", 25 * -1),
+            highlightthickness=0,
+            justify="center"
+        )
+        self.entry_1.place(
+            anchor="n",
+            x=600,
+            y=530,
+            width=970,
+            height=94.0,
         )
 
         self.entry_image_2 = PhotoImage(
@@ -148,6 +171,35 @@ class Verify(Frame):
             height=25.0
         )
 
+        self.canvas.create_text(
+            95.0,
+            346.0,
+            anchor="nw",
+            text="Digital Signature File (if digital signature in separate file)",
+            fill="#000000",
+            font=("OpenSansRoman Regular", 20 * -1)
+        )
+
+        self.entry_bg_4 = self.canvas.create_image(
+            600.0,
+            404.0,
+            image=self.entry_image_3
+        )
+        self.entry_4 = Text(
+            bd=0,
+            bg="#D9E4E8",
+            fg="#000716",
+            font=("OpenSansRoman Regular", 20 * -1),
+            highlightthickness=0,
+            xscrollcommand=scrollbar.set
+        )
+        self.entry_4.place(
+            x=111.86170387268066,
+            y=394.0,
+            width=920,
+            height=25.0
+        )
+
         self.button_image_1 = PhotoImage(
             file=relative_to_assets("button_1.png"))
         self.button_1 = Button(
@@ -158,10 +210,26 @@ class Verify(Frame):
             relief="flat"
         )
         self.button_1.place(
-            x=490.0,
-            y=701.8212890625,
-            width=219.0986328125,
-            height=69.13302612304688
+            x=617.78369140625,
+            y=695.80810546875,
+            width=216.114501953125,
+            height=68.191650390625
+        )
+
+        self.button_image_2 = PhotoImage(
+            file=relative_to_assets("button_5.png"))
+        self.button_2 = Button(
+            image=self.button_image_2,
+            borderwidth=0,
+            highlightthickness=0,
+            command=lambda: print("button_5 clicked"),
+            relief="flat"
+        )
+        self.button_2.place(
+            x=366.0,
+            y=695.80810546875,
+            width=215.0653076171875,
+            height=68.19140625
         )
 
 
@@ -171,7 +239,7 @@ class Verify(Frame):
             image=self.button_image_6,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: upload_pressed("decrypt"),
+            command=lambda: read_key(),
             relief="flat"
         )
         self.button_6.place(
@@ -186,7 +254,7 @@ class Verify(Frame):
             image=self.button_image_6,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: upload_pressed("decrypt"),
+            command=lambda: upload_pressed(),
             relief="flat"
         )
         self.button_7.place(
@@ -197,19 +265,17 @@ class Verify(Frame):
             anchor=NW
         )
 
-
-        # self.canvas.create_rectangle(
-        #     1057.0,
-        #     177.0,
-        #     1081.71484375,
-        #     199.99998474121094,
-        #     fill="#000000",
-        #     outline="")
-
-        # self.canvas.create_rectangle(
-        #     1057.0,
-        #     292.0,
-        #     1081.71484375,
-        #     314.99999237060547,
-        #     fill="#000000",
-        #     outline="")
+        self.button_8 = Button(
+            image=self.button_image_6,
+            borderwidth=0,
+            highlightthickness=0,
+            command=lambda: read_sign(),
+            relief="flat"
+        )
+        self.button_8.place(
+            x=1050,
+            y=394.0,
+            width=25,
+            height=25,
+            anchor=NW
+        )

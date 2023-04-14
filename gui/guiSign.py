@@ -57,10 +57,10 @@ class Sign(Frame):
             self.entry_2.config(state=DISABLED)
         
         def save_pressed():
-            if (self.entry_1.get(1.0, END) == "\n\n"):
+            if (self.entry_1.get(1.0, END).replace("\n","") == ""):
                 tkmb.showerror("Error", "Please enter a key")
                 return
-            elif (self.entry_2.get(1.0, END) == "\n\n"):  
+            elif (self.entry_2.get(1.0, END).replace("\n","") == ""):  
                 tkmb.showerror("Error", "Please enter a file")
                 return
             else:    
@@ -69,7 +69,7 @@ class Sign(Frame):
                     if self.istext:
                         filename = ""
                         if filename =="":
-                            filename = fd.asksaveasfilename(defaultextension=".pub")
+                            filename = fd.asksaveasfilename(defaultextension=".txt")
                         if filename != "":
                             with open(filename, 'w') as f:
                                 f.write(self.entry_2.get(1.0, END))
@@ -77,8 +77,8 @@ class Sign(Frame):
                                 f.close()
                                 tkmb.showinfo("save", "save complete")
                     elif (self.entry_2.get(1.0,END).replace("\n","").endswith(".txt")):
-                        filename = self.entry_2.get(1.0,END)
-                        with open(filename, 'w') as f:
+                        filename = self.entry_2.get(1.0,END).replace("\n","")
+                        with open(filename, 'a') as f:
                             f.writelines([f'\n*** Begin of digital signature ****\n', f'{signature}\n', '*** End of digital signature ****'])
                             f.close()
                             tkmb.showinfo("save", "save complete")
@@ -104,7 +104,9 @@ class Sign(Frame):
                                 f.write(self.entry_2.get(1.0, END))
                                 f.close()
                                 tkmb.showinfo("save", "save complete")
-
+                    else:
+                        tkmb.showinfo("save", "save complete")
+                self.entry_3.insert(END,f"*** Begin of digital signature ****\n{signature}\n*** End of digital signature ****")
                     
         scrollbar = Scrollbar(orient="horizontal")
 
@@ -218,7 +220,7 @@ class Sign(Frame):
             bd=0,
             bg="#D9E4E8",
             fg="#000716",
-            font=("OpenSansRoman Regular", 13 * -1),
+            font=("OpenSansRoman Regular", 20 * -1),
             highlightthickness=0,
             xscrollcommand=scrollbar.set
         )
