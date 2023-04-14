@@ -56,6 +56,7 @@ def greatest_common_divisor(a, b):
     return a
 
 #contoh cara kerja
+"""
 p = random_prime()
 q = random_prime()
 print(q)
@@ -67,3 +68,4 @@ pubkey = generate_public_key(n, totient)
 prikey = generate_private_key(totient, pubkey)
 print("pubkey" + str(pubkey))
 print("prikey" + str(prikey))
+"""
