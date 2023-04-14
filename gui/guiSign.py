@@ -10,7 +10,7 @@ import tkinter.messagebox as tkmb
 import sys
 import guiLanding
 sys.path.append("../Kripto_3/src/")
-from rsa import sign_message, sign_file
+from RSA import sign_message, sign_file
 
 
 OUTPUT_PATH = Path(__file__).parent

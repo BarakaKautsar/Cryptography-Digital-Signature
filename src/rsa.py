@@ -32,14 +32,19 @@ def decrypt_digest(pubkey, ciphertext):
 BUF_SIZE = 65536  # lets read stuff in 64kb chunks!
 
 def hashfile(filename):
-    sha1 = hashlib.sha1()
+    sha3 = hashlib.sha3_256()
     with open(filename, 'rb') as f:
         while True:
             data = f.read(BUF_SIZE)
             if not data:
                 break
-            sha1.update(data)
-    return sha1.hexdigest()
+            sha3.update(data)
+    return sha3.hexdigest()
+
+def hashstring(string):
+    sha3 = hashlib.sha3_256()
+    sha3.update(string.encode())
+    return sha3.hexdigest()
 
 def sign_message(message, private_key):
     message_hashed = hashlib.sha3_256(message.encode()).hexdigest()
@@ -64,5 +69,5 @@ def sign_file(file_path, private_key):
 
 # sign = encrypt_digest(prikey, haste)
 # print(sign)
-# # print(decrypt_digest(pubkey, sign))
-# # print(haste == decrypt_digest(pubkey, sign))
+# print(decrypt_digest(pubkey, sign))
+# print(haste == decrypt_digest(pubkey, sign))

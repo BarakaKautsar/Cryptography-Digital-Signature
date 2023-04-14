@@ -6,7 +6,13 @@
 from pathlib import Path
 from tkinter import *
 import tkinter.filedialog as fd
+import tkinter.messagebox as tkmb
 import guiLanding
+import sys
+sys.path.append("../Kripto_3/src/")
+import verification
+import RSA
+
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"assets/frame3")
@@ -29,6 +35,8 @@ class Verify(Frame):
             relief = "ridge"
         )
 
+        self.pubkey = (0, 0)
+
         def read_key():
             self.entry_2.delete(1.0, END)
             filetypes = [('public key', ".pub")]
@@ -38,8 +46,8 @@ class Verify(Frame):
             with open(filename, "r") as f:
                 keystring = f.read()
                 keystring = keystring.replace("(", "").replace(")", "")
-                key = tuple(map(int, keystring.split(",")))
-            self.entry_2.insert(END, key[0])
+                self.pubkey = tuple(map(int, keystring.split(",")))
+            self.entry_2.insert(END, self.pubkey[0])
 
         self.istext = True
 
@@ -51,7 +59,6 @@ class Verify(Frame):
             filename = str(filename).split("'")[1]
             self.entry_3.insert(END, filename)
             self.istext = False
-            self.entry_3.config(state=DISABLED)
         
         def read_sign():
             self.entry_4.delete(1.0, END)
@@ -59,8 +66,49 @@ class Verify(Frame):
             filename = ""
             filename = fd.askopenfile(filetypes=filetypes)
             filename = str(filename).split("'")[1]
-            self.entry_4.insert(END, filename)
-            self.entry_4.config(state=DISABLED)
+            self.entry_4.insert(END, filename)  
+        
+        def verify_pressed():
+            if self.entry_3.get(1.0, END).replace("\n","") == "" or self.entry_2.get(1.0, END).replace("\n","") == "" or self.pubkey == (0, 0):
+                tkmb.showerror("Error", "Please fill in all required fields")
+            elif self.entry_4.get(1.0, END).replace("\n","") == "": #signature included in file
+                if self.entry_3.get(1.0, END).replace("\n","").endswith(".txt"):
+                    with open(self.entry_3.get(1.0, END).replace("\n",""), "r") as f:
+                        lines = f.readlines()                
+                        if lines[-1] == '*** End of digital signature ****' and lines[-3] == '*** Begin of digital signature ****\n':
+                            signature = lines[-2][:-1]
+                            lines[-4] = lines[-4].replace("\n","")
+                            message = "".join(lines[:-3])
+                            message = RSA.hashstring(message)
+                            update_verify(verification.verification(message, signature, self.pubkey))
+                        else:
+                            tkmb.showerror("Error", "signature not found")
+                else:
+                    tkmb.showerror("Error", "signature not found")
+            else: #signature in separate file
+                with open(self.entry_4.get(1.0, END).replace("\n",""), "r") as f:
+                    lines = f.readlines()                
+                    if lines[-1] == '*** End of digital signature ****' and lines[-3] == '*** Begin of digital signature ****\n':
+                        signature = lines[-2][:-1]
+                    else:
+                        tkmb.showerror("Error", "signature not found")
+                if self.istext:
+                    message = RSA.hashstring(self.entry_3.get(1.0, END).replace("\n",""))
+                else:
+                    message = RSA.hashfile(self.entry_3.get(1.0, END).replace("\n",""))
+                update_verify(verification.verification(message, signature, self.pubkey))
+
+                    
+        
+        def update_verify(status):
+            if status == True:
+                self.entry_1.config(text="Verified")
+            else:
+                self.entry_1.config(text="Not Verified")
+
+                
+
+
 
         self.canvas.place(x = 0, y = 0)
 
@@ -222,7 +270,7 @@ class Verify(Frame):
             image=self.button_image_2,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: print("button_5 clicked"),
+            command=lambda: verify_pressed(),
             relief="flat"
         )
         self.button_2.place(
