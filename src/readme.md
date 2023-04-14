@@ -28,8 +28,8 @@
 - Bahasa pemrograman yang digunakan adalah Python 3
 
 ## 🏃‍♂️ TUTORIAL MENJALANKAN PROGRAM 🏃‍♂️
-- 1. Clone repositori ini
-- 2. Run file bernama "main.py"
-- 3. Jika belum memiliki key, pada halaman Generate Public Key and Private Key, pilihlah nilai p, q yang bernilai prima dan nilai e yang relatif prima dengan nilai (p-1)*(q-1) 
-- 4. Jika telah memiliki key, lakukan tanda tangan pada halaman Signing Digital Signature
-- 5. Tanda tangan digital dapat diverifikasi keabsahannya pada halaman Verifying Digital Signature
+1. Clone repositori ini
+2. Run file bernama "main.py"
+3. Jika belum memiliki key, pada halaman Generate Public Key and Private Key, pilihlah nilai p, q yang bernilai prima dan nilai e yang relatif prima dengan nilai (p-1)*(q-1) 
+4. Jika telah memiliki key, lakukan tanda tangan pada halaman Signing Digital Signature
+5. Tanda tangan digital dapat diverifikasi keabsahannya pada halaman Verifying Digital Signature
