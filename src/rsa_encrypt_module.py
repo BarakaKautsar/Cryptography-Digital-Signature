@@ -1,7 +1,4 @@
-'''
-RSA (Rivest-Shamir-Adleman) Algorithm
-Encryption
-'''
+#Coba Metode RSA Modul by Modul
 
 from typing import List
 import math
@@ -32,8 +29,9 @@ def digitDivider(n: int) -> int:
 def maxBitLength(n: int) -> int:
     return (n-1).bit_length()
 
-def encryptBytes(message: bytes, d: int, n: int) -> bytes:
+def encryptBytes(message: bytes, prikey: (int, int)) -> bytes:
 
+    d, n = prikey
     plainBytes = message
     digitDiv = digitDivider(n)
     intValue = convertBytetoIntArray(plainBytes, digitDiv)
@@ -45,5 +43,6 @@ def encryptBytes(message: bytes, d: int, n: int) -> bytes:
 
 
 
-if __name__ == "__main__":
-    main()
+
+#if __name__ == "__main__":
+    #main()
