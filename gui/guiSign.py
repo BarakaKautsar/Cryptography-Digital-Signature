@@ -6,6 +6,7 @@
 from pathlib import Path
 from tkinter import *
 import tkinter.filedialog as fd
+import tkinter.messagebox as tkmb
 import guiLanding
 # Explicit imports to satisfy Flake8
 # from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
@@ -32,10 +33,79 @@ class Sign(Frame):
             relief = "ridge"
         )
 
-        def upload_pressed(type):
-            filetypes = [('text files', '*.txt')]
-            f = fd.askopenfile(filetypes=filetypes)
+        self.istext = True
 
+        def read_key():
+            filetypes = [('private key', ".priv")]
+            filename = ""
+            filename = fd.askopenfile(filetypes=filetypes)
+            filename = str(filename).split("'")[1]
+            with open(filename, "r") as f:
+                keystring = f.read()
+                keystring = keystring.replace("(", "").replace(")", "")
+                key = tuple(map(int, keystring.split(",")))
+            self.entry_1.insert(END, key[0])
+
+        def upload_pressed():
+            self.entry_2.delete(1.0, END)
+            filetypes = [('text files', '*.txt'),('All files', '*.*')]
+            filename = ""
+            filename = fd.askopenfile(filetypes=filetypes)
+            filename = str(filename).split("'")[1]
+            self.entry_2.insert(END, filename)
+            self.istext = False
+            self.entry_2.config(state=DISABLED)
+        
+        def save_pressed():
+            if (self.entry_1.get(1.0, END) == "\n\n"):
+                tkmb.showerror("Error", "Please enter a key")
+                return
+            elif (self.entry_2.get(1.0, END) == "\n\n"):  
+                tkmb.showerror("Error", "Please enter a file")
+                return
+            else:    
+                signature = "signature"
+                if (radio.get()==1): #add to file
+                    if self.istext:
+                        filename = ""
+                        if filename =="":
+                            filename = fd.asksaveasfilename(defaultextension=".pub")
+                        if filename != "":
+                            with open(filename, 'w') as f:
+                                f.write(self.entry_2.get(1.0, END))
+                                f.writelines([f'\n*** Begin of digital signature ****\n', f'{signature}\n', '*** End of digital signature ****'])
+                                f.close()
+                                tkmb.showinfo("save", "save complete")
+                    elif (self.entry_2.get(1.0,END).replace("\n","").endswith(".txt")):
+                        filename = self.entry_2.get(1.0,END)
+                        with open(filename, 'w') as f:
+                            f.writelines([f'\n*** Begin of digital signature ****\n', f'{signature}\n', '*** End of digital signature ****'])
+                            f.close()
+                            tkmb.showinfo("save", "save complete")
+                    else:
+                        print(self.entry_2.get(1.0,END))
+                        tkmb.showerror("Error", "Unable to add to current file type, please save signature in a seperate file or choose a different file type")
+                else: #separate file
+                    tkmb.showinfo("save", "save signature file")
+                    savefile = ""
+                    if savefile =="":
+                        savefile = fd.asksaveasfilename(defaultextension=".txt")
+                    if savefile != "":
+                        with open(savefile, 'w') as f:
+                            f.writelines([f'*** Begin of digital signature ****\n', f'{signature}\n','*** End of digital signature ****'])
+                            f.close()
+                    if self.istext:
+                        tkmb.showinfo("save", "save message file")
+                        textfile = ""
+                        if textfile =="":
+                            textfile = fd.asksaveasfilename(defaultextension=".txt")
+                        if textfile != "":
+                            with open(textfile, 'w') as f:
+                                f.write(self.entry_2.get(1.0, END))
+                                f.close()
+                                tkmb.showinfo("save", "save complete")
+
+                    
         scrollbar = Scrollbar(orient="horizontal")
 
         self.canvas.place(x = 0, y = 0)
@@ -96,14 +166,6 @@ class Sign(Frame):
             width=920,
             height=25
         )
-
-        # canvas.create_rectangle(
-        #     1053.0,
-        #     167.0,
-        #     1077.7149658203125,
-        #     189.99998474121094,
-        #     fill="#000000",
-        #     outline="")
 
         self.entry_image_2 = PhotoImage(
             file=relative_to_assets("entry_2.png"))
@@ -174,12 +236,13 @@ class Sign(Frame):
         #     423.1205711364746,
         #     fill="#000000",
         #     outline="")
+        radio = IntVar()
         self.R1= Radiobutton(
             text="Store in separate file",
             font=("OpenSansRoman Regular", 20 * -1),
             background="#FFFFFF",
-            value="value1",
-            variable="variable1",
+            value=0,
+            variable=radio,
             anchor=NW
         )
 
@@ -192,8 +255,8 @@ class Sign(Frame):
             text="Add in current file",
             font=("OpenSansRoman Regular", 20 * -1),
             background="#FFFFFF",
-            value="value2",
-            variable="variable1",
+            value=1,
+            variable=radio,
             anchor=NW
         )
 
@@ -202,13 +265,6 @@ class Sign(Frame):
             y = 392.3546142578125
         )
 
-        # canvas.create_rectangle(
-        #     503.50341796875,
-        #     394.91845703125,
-        #     909.443115234375,
-        #     425.6844139099121,
-        #     fill="#000000",
-        #     outline="")
 
         self.button_image_1 = PhotoImage(
             file=relative_to_assets("button_1.png"))
@@ -232,7 +288,7 @@ class Sign(Frame):
             image=self.button_image_2,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: self.master.switch_frame(guiLanding.Landing),
+            command=lambda: save_pressed(),
             relief="flat"
         )
         self.button_2.place(
@@ -248,7 +304,7 @@ class Sign(Frame):
             image=self.button_image_6,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: upload_pressed("decrypt"),
+            command=lambda: read_key(),
             relief="flat"
         )
         self.button_6.place(
@@ -263,7 +319,7 @@ class Sign(Frame):
             image=self.button_image_6,
             borderwidth=0,
             highlightthickness=0,
-            command=lambda: upload_pressed("decrypt"),
+            command=lambda: upload_pressed(),
             relief="flat"
         )
         self.button_7.place(

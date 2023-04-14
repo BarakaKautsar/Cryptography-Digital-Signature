@@ -29,8 +29,10 @@ class GenerateKey(Frame):
             self.entry_1.delete(1.0,END)
             self.entry_2.delete(1.0,END)
             self.entry_3.delete(1.0,END)
-            self.entry_4.delete(1.0,END)
 
+            self.entry_4.config(state=NORMAL)
+            self.entry_4.delete(1.0,END)
+            self.entry_4.config(state=DISABLED)
 
             p = generator.random_prime()
             q = generator.random_prime()
@@ -61,10 +63,12 @@ class GenerateKey(Frame):
                 n, totient = generator.initiate(int(p),int(q))
                 pubkey = generator.generate_public_key(n, totient)
                 prikey = generator.generate_private_key(totient, pubkey)
+
                 self.entry_4.config(state=NORMAL)
                 self.entry_4.delete(1.0,END)
                 self.entry_4.insert(END,prikey[0])
                 self.entry_4.config(state=DISABLED)
+                
                 savefilepub = ""
                 savefilepriv = ""
                 tkmb.showinfo("Save", "Save your public key")
